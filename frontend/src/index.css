@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html{
+        @apply scroll-smooth
+    }
+    body {
+        @apply bg-coreBg w-screen  ;
+        @apply font-mono text-sm text-white transition-all overflow-x-hidden capitalize;
+        
+    }
+    button,a{
+        @apply transition-colors 
+    }
+    input,textarea{
+        @apply outline-none my-3 text-sm placeholder:text-zinc-600
+    }
+    p{
+        @apply text-zinc-500
+    }
+    
+  }
