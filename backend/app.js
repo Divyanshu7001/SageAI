@@ -13,7 +13,7 @@ app.use(
     credentials: true,
   })
 );
-//app.use(express.static(path.resolve("public")));
+app.use(express.static(path.resolve("public")));
 
 app.use(
   fileUpload({
