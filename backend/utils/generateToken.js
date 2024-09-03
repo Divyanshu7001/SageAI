@@ -33,7 +33,7 @@ export const generateToken = async (user, message, statuscode, res) => {
       httpOnly: true,
       sameSite: "none",
       secure: true,
-      partitioned:true,
+      partitioned: true,
     })
     .json({
       success: true,
