@@ -7,11 +7,12 @@ import { Notification } from "../models/notification.model.js";
 
 export const createAdmin = catchAsyncErrors(async (req, res, next) => {
   //console.log(req.body);
-  let avatarUrl = null;
-  const { firstName, lastName, username, email, password, plan } = req.body;
+  //let avatarUrl = null;
+  const { firstName, lastName, username, email, gender, password } = req.body;
+  console.log(req.body);
 
   // Check for missing fields
-  if (!firstName || !lastName || !username || !email || !password || !plan) {
+  if (!firstName || !lastName || !username || !email || !gender || !password) {
     return next(new ErrorHandler("Please provide all the details", 401));
   }
 
@@ -27,12 +28,11 @@ export const createAdmin = catchAsyncErrors(async (req, res, next) => {
   const admin = await User.create({
     firstName,
     lastName,
+    gender,
     email,
-    plan,
     role: "Admin",
     password,
     username,
-    avatar: avatarUrl,
   });
   //console.log(res);
 
@@ -152,7 +152,7 @@ export const deleteAdmin = catchAsyncErrors(async (req, res) => {
 
 export const getAllUsers = catchAsyncErrors(async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ role: "User" });
     res.status(200).json({
       success: true,
       messsage: "All Users fetched successfully",

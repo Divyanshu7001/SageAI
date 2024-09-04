@@ -40,7 +40,7 @@ export default function Login() {
         setIsAuthenticated(true);
         console.log(res.data.user);
 
-        navigateTo("/dashboard", { state: { userData: res.data.user } });
+        navigateTo("/dashboard/overview", { state: { userData: res.data.user } });
         setEmail("");
         setPassword("");
         setconfirmPassword("");
@@ -55,7 +55,7 @@ export default function Login() {
   };
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" />;
+    return <Navigate to="/dashboard/Overview" />;
   }
 
   return (
