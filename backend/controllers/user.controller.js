@@ -84,14 +84,7 @@ export const createUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 export const loginUser = async (req, res, next) => {
-  const { email, password, confirmPassword } = req.body;
-  console.log(req);
-
-  if (password != confirmPassword) {
-    return next(
-      new ErrorHandler("Password & Confirm Password do not match", 401)
-    );
-  }
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return next(new ErrorHandler("Please provide all the details", 401));
@@ -104,8 +97,11 @@ export const loginUser = async (req, res, next) => {
   if (existedUser.role != "User") {
     return next(new ErrorHandler("No User with this credentials exists", 403));
   }
+  console.log(existedUser.password);
+  console.log(password);
+
   const response = await comparePassword(existedUser, password);
-  //console.log(response);
+  console.log(response);
 
   if (response) {
     generateToken(existedUser, "User Logged in Sucessfully", 202, res);

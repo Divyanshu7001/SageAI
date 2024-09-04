@@ -1,133 +1,237 @@
-import React, { useState, useContext } from "react";
-import BtnWhite from "../utility/BtnWhite.jsx";
-import Register from "./Register.jsx";
-import { Context } from "../../main.jsx";
-import { useNavigate, Navigate } from "react-router-dom";
+import React, { useRef, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import BtnWhite from "../utility/BtnWhite.jsx";
+import { useNavigate } from "react-router-dom";
+// import Register from "./Register";
 
 export default function Login() {
-  const { isAuthenticated, setIsAuthenticated } = useContext(Context);
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setconfirmPassword] = useState("");
-  console.log(isAuthenticated);
+  const navigate = useNavigate();
+  const LoginForm = useRef();
+  const RegForm = useRef();
+  const [loginData, setLoginData] = useState({
+    email: "",
+    password: "",
+  });
+  const [registerData, setRegisterData] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+    gender: "",
+  });
 
-  const navigateTo = useNavigate();
-  console.log(import.meta.env.VITE_BACKEND_URI);
+  const ChangeToRegister = () => {
+    LoginForm.current.classList.toggle("hidden");
+    RegForm.current.classList.toggle("hidden");
+  };
 
-  const handleLogin = async (e) => {
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setLoginData({ ...loginData, [name]: value });
+  };
+
+  const handleRegisterChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setRegisterData({ ...registerData, [name]: value });
+  };
+
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    axios
-      .post(
-        `${import.meta.env.VITE_BACKEND_URI}/v1/api/user/loginUser`,
-        {
-          email,
-          password,
-          confirmPassword,
-        },
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then((res) => {
-        toast.success(res.data.message);
-        localStorage.setItem("isAuthenticated", true);
-        setIsAuthenticated(true);
-        console.log(res.data.user);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/v1/api/user/loginUser",
+        loginData
+      );
+      console.log("Login successful:", response.data);
+      // Handle successful login (e.g., redirect, display message)
 
-        navigateTo("/dashboard/overview", { state: { userData: res.data.user } });
-        setEmail("");
-        setPassword("");
-        setconfirmPassword("");
-      })
-      .catch((err) => {
-        toast.error(err);
-      });
+      localStorage.setItem("userId", response.data.user._id);
+      navigate("/Dashboard/Overview");
+    } catch (error) {
+      console.error("Login error:", error.response.data);
+      // Handle login error (e.g., display error message)
+    }
   };
 
-  const toggleForm = () => {
-    setIsLogin(!isLogin); // Toggle the form between login and register
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/v1/api/user/createUser",
+        registerData
+      );
+      alert("Registration successful:", response);
+      // Handle successful registration (e.g., redirect, display message)
+      navigate("/Dashboard/Overview");
+    } catch (error) {
+      console.error("Registration error:", error.response.data);
+      // Handle registration error (e.g., display error message)
+    }
   };
-
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard/Overview" />;
-  }
 
   return (
-    <main className="min-h-screen flex flex-col lg:flex-row">
-      {/* Image banner */}
-      <div className="lg:w-1/2 bg-[url('/sample-image.jpg')] bg-center bg-cover bg-no-repeat lg:block hidden"></div>
+    <main className="h-screen container m-auto p-10 my-10 grid grid-cols-2 gap-5 relative">
+      {/* Banner */}
+      <div className="h-full content-center bg-[url(https://th.bing.com/th/id/R.a1b845ebd592d015e011382624077e2e?rik=ymu5O%2ftMQJctww&riu=http%3a%2f%2fshopsmarts.ai%2fwp-content%2fuploads%2f2021%2f09%2fshopsmarts-ai-important-characteristics-support-chatbot-1000.jpg&ehk=M8SwSI0orvwX5nU3dc%2fLJcc6JQedTlD1UV4HTl793P0%3d&risl=&pid=ImgRaw&r=0)] bg-center bg-cover bg-no-repeat"></div>
 
-      {/* Form */}
-      <div className="lg:w-1/2 flex items-center justify-center p-6">
-        {isLogin ? (
-          <form
-            className="w-full max-w-sm bg-black text-white p-6 rounded-lg"
-            onSubmit={handleLogin}
+      {/* Forms */}
+      <div>
+        <form
+          ref={LoginForm}
+          onSubmit={handleLoginSubmit}
+          className="px-2 p-10 text-base content-center h-full"
+        >
+          <div>
+            <label htmlFor="email" className="">
+              Email
+            </label>
+            <input
+              required
+              type="email"
+              id="email"
+              name="email"
+              value={loginData.email}
+              onChange={handleLoginChange}
+              placeholder="Email Address"
+              className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="">
+              Password
+            </label>
+            <input
+              required
+              type="password"
+              id="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginChange}
+              placeholder="Password"
+              className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+            />
+          </div>
+
+          <div className="flex flex-col items-center justify-center mt-5">
+            <BtnWhite type="submit" text="Login" />
+          </div>
+          <button
+            type="button"
+            onClick={ChangeToRegister}
+            className="text-xs block underline w-fit ml-auto mt-10"
           >
-            <div className="mb-4">
-              <label htmlFor="email" className="block mb-2">
-                Email
-              </label>
-              <input
-                required
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block bg-transparent border border-gray-600 px-4 py-2 rounded-md w-full text-white"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="password" className="block mb-2">
-                Password
-              </label>
-              <input
-                required
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block bg-transparent border border-gray-600 px-4 py-2 rounded-md w-full text-white"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block mb-2">
-                Confirm Password
-              </label>
-              <input
-                required
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setconfirmPassword(e.target.value)}
-                className="block bg-transparent border border-gray-600 px-4 py-2 rounded-md w-full text-white"
-              />
-            </div>
-            <div className="flex flex-col items-center mt-5">
-              <BtnWhite type="submit" text="Login" />
-            </div>
-            <button
-              onClick={toggleForm}
-              className="text-xs block underline w-fit ml-auto mt-10 text-white"
-            >
-              Don't have an account? Register
-            </button>
-          </form>
-        ) : (
-          <Register />
-        )}
+            Don't have an Account? Register
+          </button>
+        </form>
+
+        <form
+          ref={RegForm}
+          onSubmit={handleRegisterSubmit}
+          className="px-2 p-10 text-base hidden"
+        >
+          <div className="">
+            <label htmlFor="firstName" className="">
+              First Name
+            </label>
+            <input
+              required
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={registerData.firstName}
+              onChange={handleRegisterChange}
+              placeholder="First Name"
+              className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+            />
+          </div>
+          <div className="">
+            <label htmlFor="lastName" className="">
+              Last Name
+            </label>
+            <input
+              required
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={registerData.lastName}
+              onChange={handleRegisterChange}
+              placeholder="Last Name"
+              className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+            />
+          </div>
+          <div className="">
+            <label htmlFor="username" className="">
+              Your Username
+            </label>
+            <input
+              required
+              type="text"
+              id="username"
+              name="username"
+              value={registerData.username}
+              onChange={handleRegisterChange}
+              placeholder="Name"
+              className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+            />
+          </div>
+
+          <label htmlFor="gender" className="">
+            Gender
+          </label>
+          <input
+            required
+            type="text"
+            id="gender"
+            name="gender"
+            value={registerData.gender}
+            onChange={handleRegisterChange}
+            placeholder="Enter Gender"
+            className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+          />
+
+          <label htmlFor="email" className="">
+            Email
+          </label>
+          <input
+            required
+            type="email"
+            id="email"
+            name="email"
+            value={registerData.email}
+            onChange={handleRegisterChange}
+            placeholder="Email Address"
+            className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+          />
+
+          <label htmlFor="password" className="">
+            Password
+          </label>
+          <input
+            required
+            type="password"
+            id="password"
+            name="password"
+            value={registerData.password}
+            onChange={handleRegisterChange}
+            placeholder="Password"
+            className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+          />
+
+          <div className="flex flex-col items-center justify-center mt-5">
+            <BtnWhite type="submit" text="Register" />
+          </div>
+          <button
+            type="button"
+            onClick={ChangeToRegister}
+            className="text-xs block underline w-fit ml-auto mt-10"
+          >
+            Already have an Account?
+          </button>
+        </form>
       </div>
     </main>
   );

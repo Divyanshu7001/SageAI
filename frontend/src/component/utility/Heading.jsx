@@ -7,7 +7,7 @@ export default function Heading(props) {
         setSize(props.size===undefined?"text-5xl" :props.size)
     },[props])
   return (
-    <h1 className={`text-center ${size}`}>
+    <h1 className={`text-center ${size} `}>
       {props.text}
     </h1>
   )

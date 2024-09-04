@@ -27,24 +27,26 @@ const FAQSection = () => {
   ];
 
   return (
-    <div id='FAQ' className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 py-12 border-b border-zinc-500">
-      <h2 className="text-2xl sm:text-3xl text-center mb-8">Frequently Asked Questions</h2>
-      <div className="w-full max-w-2xl">
+    <div id='FAQ' className="relative h-screen content-center grid gap-5 ">
+      <h2 className="text-3xl  text-center mb-6">Frequently Asked Questions</h2>
+      <div className="w-1/2 m-auto">
         {faqs.map((faq, index) => (
           <div key={index} className="border-b border-zinc-500 pb-4 mb-4">
             <h3
-              className="text-lg sm:text-xl cursor-pointer flex justify-between items-center"
+              className="text-xl  cursor-pointer flex justify-between items-center"
               onClick={() => toggleFAQ(index)}
             >
               {faq.question}
               <span>{openIndex === index ? '-' : '+'}</span>
             </h3>
-            {openIndex === index && <p className="mt-2 text-sm sm:text-base">{faq.answer}</p>}
-          </div>
+            {openIndex === index && <p className="mt-2 ">{faq.answer}</p>}
+          </div> 
         ))}
       </div>
-    </div>
+    </div> 
   );
 };
 
 export default FAQSection;
+
+

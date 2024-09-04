@@ -1,70 +1,28 @@
-import React, { useState, useEffect } from "react";
-import Icon from "./Icon.jsx";
-import BtnWhite from "../utility/BtnWhite.jsx";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import Icon from "./Icon";
+import BtnWhite from "../utility/BtnWhite";
+import { Link, NavLink } from "react-router-dom";
+import SmallNav from "./SmallNav";
 
 export default function NavBar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const loggedIn = sessionStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedIn);
-  }, []);
-
-  const handleProfileClick = () => {
-    navigate("/dashboard");
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("isLoggedIn");
-    setIsLoggedIn(false);
-    navigate("/");
-  };
-
   return (
-    <nav className="w-full fixed z-10 top-0 p-5 bg-coreBg">
-      <div className="container mx-auto flex flex-wrap items-center justify-between">
-        <div className="flex items-center">
+    <>
+      <nav className="w-screen fixed z-10 top-0 grid grid-cols-3 items-center justify-center p-5 px-10 bg-blend-luminosity ">
+        <div className="items-center justify-self-start ">
           <Icon />
         </div>
-
-        <div className="lg:hidden">
-          <button onClick={() => setIsOpen(!isOpen)} className="text-white">
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-        </div>
-
-        <ul
-          className={`${
-            isOpen ? "block" : "hidden"
-          } lg:flex flex-col lg:flex-row w-full lg:w-auto mt-4 lg:mt-0 lg:items-center lg:justify-center lg:gap-14`}
-        >
+        <ul className="hidden md:flex items-center justify-center gap-14  ">
           <li>
-            <Link
-              className="block py-2 lg:py-3 hover:border-coreOrange lg:border-b-2 border-b-transparent"
+            <NavLink
+              className=" py-3  hover:border-coreOrange border-b-2 border-b-transparent "
               to="/"
             >
               Home
-            </Link>
+            </NavLink>
           </li>
           <li>
             <a
-              className="block py-2 lg:py-3 hover:border-coreOrange lg:border-b-2 border-b-transparent"
+              className=" py-3  hover:border-coreOrange border-b-2 border-b-transparent"
               href="/#Features"
             >
               Features
@@ -72,51 +30,27 @@ export default function NavBar() {
           </li>
           <li>
             <a
-              className="block py-2 lg:py-3 hover:border-coreOrange lg:border-b-2 border-b-transparent"
+              className=" py-3  hover:border-coreOrange border-b-2 border-b-transparent"
               href="/#FAQ"
             >
               FAQ
             </a>
           </li>
+
           <li>
-            <Link
-              className="block py-2 lg:py-3 hover:border-coreOrange lg:border-b-2 border-b-transparent"
-              to="/About"
-            >
-              About
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="block py-2 lg:py-3 hover:border-coreOrange lg:border-b-2 border-b-transparent"
+            <NavLink
+              className=" py-3  hover:border-coreOrange border-b-2 border-b-transparent"
               to="/Contact"
             >
               Contact
-            </Link>
+            </NavLink>
           </li>
         </ul>
-
-        <div className="hidden lg:block">
-          {isLoggedIn ? (
-            <>
-              <button
-                onClick={handleProfileClick}
-                className="bg-white text-black px-4 py-2 rounded-md"
-              >
-                Profile
-              </button>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-md ml-4"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <BtnWhite text="Login" to="/login" />
-          )}
+        <div className="justify-self-end">
+          <BtnWhite endpoint="/Login" text="Login" />
         </div>
-      </div>
-    </nav>
+      </nav>
+      {/* <SmallNav/> */}
+    </>
   );
 }
