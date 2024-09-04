@@ -42,7 +42,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/v1/api/user/loginUser",
+        `${import.meta.env.VITE_BACKEND_USER_URI}/loginUser`,
         loginData
       );
       console.log("Login successful:", response.data);
@@ -60,7 +60,7 @@ export default function Login() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/v1/api/user/createUser",
+        `${import.meta.env.VITE_BACKEND_USER_URI}/createUser`,
         registerData
       );
       alert("Registration successful:", response);
