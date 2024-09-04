@@ -8,11 +8,12 @@ import fs from "fs";
 import cloudinary from "cloudinary";
 
 export const createUser = catchAsyncErrors(async (req, res, next) => {
-  let avatarUrl = null;
-  const { firstName, lastName, username, email, password, plan } = req.body;
+  // let avatarUrl = null;
+  const { firstName, lastName, username, gender, email, password } = req.body;
+  console.log(req.body);
 
   // Check for missing fields
-  if (!firstName || !lastName || !username || !email || !password || !plan) {
+  if (!firstName || !lastName || !username || !gender || !email || !password) {
     return next(new ErrorHandler("Please provide all the details", 401));
   }
 
@@ -23,66 +24,68 @@ export const createUser = catchAsyncErrors(async (req, res, next) => {
       new ErrorHandler("User already exists with these credentials", 402)
     );
   }
+  //console.log(req.file);
 
   // Handle avatar upload if present
-  if (req.files && req.files.avatar) {
-    const avatar = req.files.avatar;
-    const allowedFormats = [
-      "image/png",
-      "image/jpg",
-      "image/jpeg",
-      "image/webp",
-    ];
+  // if (req.file) {
+  //   const avatar = req.file;
+  //   const allowedFormats = [
+  //     "image/png",
+  //     "image/jpg",
+  //     "image/jpeg",
+  //     "image/webp",
+  //   ];
 
-    if (!allowedFormats.includes(avatar.mimetype)) {
-      return next(new ErrorHandler("File format not supported"));
-    }
+  //   if (!allowedFormats.includes(avatar.mimetype)) {
+  //     return next(new ErrorHandler("File format not supported"));
+  //   }
 
-    try {
-      // Upload to Cloudinary
-      const cloudinaryResponse = await cloudinary.uploader.upload(
-        avatar.tempFilePath,
-        {
-          folder: "avatars", // Optional: Specify the folder in Cloudinary
-        }
-      );
+  //   try {
+  //     // Upload to Cloudinary
 
-      if (cloudinaryResponse && !cloudinaryResponse.error) {
-        avatarUrl = {
-          public_id: cloudinaryResponse.public_id,
-          url: cloudinaryResponse.secure_url,
-        };
-      } else {
-        console.error(
-          "Cloudinary Error: ",
-          cloudinaryResponse.error || "Unknown Cloudinary error"
-        );
-      }
-    } catch (error) {
-      console.error("Error uploading to Cloudinary: ", error);
-      return next(new ErrorHandler("Error uploading avatar image", 500));
-    }
-  }
+  //     const cloudinaryResponse = await cloudinary.uploader.upload(avatar.path);
+
+  //     if (!cloudinaryResponse) {
+  //       return next(
+  //         new ErrorHandler("Error While uploading to Cloudinary", 500)
+  //       );
+  //     }
+
+  //     if (cloudinaryResponse && !cloudinaryResponse.error) {
+  //       avatarUrl = {
+  //         public_id: cloudinaryResponse.public_id,
+  //         url: cloudinaryResponse.secure_url,
+  //       };
+  //     } else {
+  //       console.error(
+  //         "Cloudinary Error: ",
+  //         cloudinaryResponse.error || "Unknown Cloudinary error"
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.error("Error uploading to Cloudinary: ", error);
+  //     return next(new ErrorHandler("Error uploading avatar image", 500));
+  //   }
+  // }
 
   // Create the user
   const user = await User.create({
     firstName,
     lastName,
+    gender,
     email,
-    plan,
     role: "User",
     password,
     username,
-    avatar: avatarUrl, // Will be null if no avatar was uploaded
   });
 
   // Generate token and respond
   generateToken(user, "User Created Successfully", 201, res);
 });
 
-export const loginUser = catchAsyncErrors(async (req, res, next) => {
+export const loginUser = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
-  //console.log(req.body);
+  console.log(req);
 
   if (password != confirmPassword) {
     return next(
@@ -109,12 +112,16 @@ export const loginUser = catchAsyncErrors(async (req, res, next) => {
   } else {
     return next(new ErrorHandler("Passwords didn't match,Please try again!!"));
   }
-});
+};
 
 export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
-  const { id } = req.params;
   try {
-    const user = User.findById({ id });
+    console.log(req.user);
+    //console.log(req);
+
+    const user = req.user;
+    console.log(user);
+
     res.status(201).json({
       success: true,
       message: "User Details fetched Successfully",
@@ -151,11 +158,11 @@ export const logoutUser = catchAsyncErrors(async (req, res) => {
 export const updateUser = catchAsyncErrors(async (req, res, next) => {
   const userVerified = req.user;
   const id = userVerified._id;
-  console.log(req.files);
+  console.log(req.file);
   console.log(req);
 
-  if (req.files && req.files.avatar) {
-    const avatar = req.files.avatar;
+  if (req.file) {
+    const avatar = req.file;
     const allowedFormats = [
       "image/png",
       "image/jpg",
@@ -169,12 +176,7 @@ export const updateUser = catchAsyncErrors(async (req, res, next) => {
 
     try {
       // Upload to Cloudinary
-      const cloudinaryResponse = await cloudinary.uploader.upload(
-        avatar.tempFilePath,
-        {
-          folder: "avatars", // Optional: Specify the folder in Cloudinary
-        }
-      );
+      const cloudinaryResponse = await cloudinary.uploader.upload(avatar.path);
 
       if (cloudinaryResponse && !cloudinaryResponse.error) {
         req.body.avatar = {

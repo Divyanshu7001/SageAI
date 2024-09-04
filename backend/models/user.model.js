@@ -18,6 +18,11 @@ const userSchema = mongoose.Schema(
       required: true,
       minlength: [2, "Username must be of two Characters"],
     },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["Male", "Female", "Others"],
+    },
     email: {
       type: String,
       required: true,
@@ -35,10 +40,6 @@ const userSchema = mongoose.Schema(
         validator.isStrongPassword,
         "Please provide an Strong Password",
       ],
-    },
-    avatar: {
-      public_id: String,
-      url: String,
     },
   },
   {

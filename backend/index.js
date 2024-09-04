@@ -3,6 +3,7 @@ import "dotenv/config";
 import http from "http";
 import { Socket, Server } from "socket.io";
 import app from "./app.js";
+import { upload } from "./middlewares/multer.middleware.js";
 import { dbConnection } from "./db/dbConnection.js";
 import { verifyUser, verifyAdmin } from "./utils/auth.js";
 import {
@@ -32,11 +33,11 @@ const mainRouter = new Router();
 const userRouter = new Router();
 const adminRouter = new Router();
 
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// cloudinary.v2.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
 //Socket
 const io = initializeSocket(server);
 
@@ -44,6 +45,10 @@ const io = initializeSocket(server);
 mainRouter.get("/", (req, res) => {
   console.log("Welcome to the App");
   res.sendFile("/public/index.html");
+});
+
+mainRouter.get("/testUpload", (req, res) => {
+  res.sendFile("/public/fileupload.html");
 });
 
 
@@ -64,7 +69,6 @@ adminRouter.post("/updateAdmin", verifyAdmin, updateAdmin);
 adminRouter.post("/deleteAdmin", verifyAdmin, deleteAdmin);
 adminRouter.post("/getAllUsers", verifyAdmin, getAllUsers);
 adminRouter.post("/getAllNotifications", verifyAdmin, getAllNotifications);
-
 
 app.use("/v1/api/user", userRouter);
 app.use("/v1/api/admin", adminRouter);

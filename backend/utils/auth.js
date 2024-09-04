@@ -5,6 +5,8 @@ import "dotenv/config";
 import jwt from "jsonwebtoken";
 
 const verifyUser = async (req, _, next) => {
+  //console.log(req.headers);
+
   try {
     const token =
       req.headers.cookie
@@ -22,6 +24,8 @@ const verifyUser = async (req, _, next) => {
 
     try {
       const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      //console.log(decodedToken);
+
       const user = await User.findById(decodedToken?.id).select("-password");
 
       if (!user) {
@@ -29,6 +33,7 @@ const verifyUser = async (req, _, next) => {
       }
 
       req.user = user;
+
       next();
     } catch (verifyError) {
       return next(

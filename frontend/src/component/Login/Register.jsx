@@ -10,7 +10,7 @@ export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [gender, setGender] = useState("");
 
   console.log(isAuthenticated);
 
@@ -24,9 +24,12 @@ export default function Register() {
       .post(
         `${import.meta.env.VITE_BACKEND_URI}/v1/api/user/createUser`,
         {
+          lastName,
+          firstName,
+          username,
           email,
           password,
-          confirmPassword,
+          gender,
         },
         {
           withCredentials: true,
@@ -54,7 +57,7 @@ export default function Register() {
   return (
     <>
       <form className="w-full max-w-sm bg-black text-white p-6 rounded-lg">
-        <label htmlFor="firstName" className="">
+        <label htmlFor="firstName" className="" onSubmit={handleRegister}>
           First Name
         </label>
         <input
@@ -93,6 +96,19 @@ export default function Register() {
           onChange={(e) => setUsername(e.target.value)}
           className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
         />
+        <label htmlFor="username" className="">
+          Gender
+        </label>
+        <input
+          required
+          type="text"
+          id="Regpassword"
+          name="username"
+          placeholder="Enter Username"
+          value={gender}
+          onChange={(e) => setGender(e.target.value)}
+          className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
+        />
         <label htmlFor="email" className="">
           Email
         </label>
@@ -119,20 +135,6 @@ export default function Register() {
           onChange={(e) => setPassword(e.target.value)}
           className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
         />
-        <label htmlFor="avatar" className="">
-          Avatar
-        </label>
-        <input
-          required
-          type="file"
-          id="Regpassword"
-          name="avatar"
-          placeholder="Upload Avatar Image"
-          value={avatar}
-          onChange={(e) => setAvatar(e.target.value)}
-          className="block bg-transparent border border-zinc-500 px-4 py-2 rounded-md w-full"
-        />
-
         <div className="flex flex-col items-center  justify-center mt-5">
           <BtnWhite type="submit" text="Register" />
         </div>
