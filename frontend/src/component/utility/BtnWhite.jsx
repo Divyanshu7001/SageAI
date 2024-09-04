@@ -1,22 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
-export default function BtnWhite({ text, type, to }) {
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    if (to) {
-      navigate(to);
-    }
-  };
-
+export default function BtnWhite(props) {
+  const navigate = useNavigate()
   return (
-    <button
-      type={type === undefined ? 'button' : type}
-      onClick={handleClick}
-      className="inline-block px-4 py-2 border border-zinc-500 hover:bg-white hover:text-zinc-700 rounded-md w-fit"
-    >
-      {text}
-    </button>
-  );
+    <button onClick={()=>{props.endpoint!==undefined?navigate(props.endpoint):""}} type={props.type===undefined?'button':'submit'} className="inline-block px-4 py-2  border border-zinc-500 hover:bg-white hover:text-zinc-700 rounded-md w-fit">{props.text}</button>
+        
+  )
 }

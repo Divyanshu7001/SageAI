@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 
 export default function App() {
   const [msg, setmsg] = useState("");
-  const socket = io("http://localhost:3000/", {
+  const socket = io("http://localhost:3000", {
     autoConnect: false, // Prevents auto connection
   });
 
