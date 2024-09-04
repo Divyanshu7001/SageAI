@@ -35,7 +35,7 @@ const ControlPanelSettings = () => {
 
     try {
 
-      const response = await axios.delete('http://localhost:3000/v1/api/User/deleteUser', {
+      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_USER_URI}/deleteUser`, {
          // Replace this with the appropriate user identifier
          "_id": localStorage.getItem('userId')
       });
