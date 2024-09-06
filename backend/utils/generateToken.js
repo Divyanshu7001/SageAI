@@ -39,6 +39,7 @@ export const generateToken = async (user, message, statuscode, res) => {
       user,
       token,
     });
+  req.cookies[cookieName] = token;
 };
 
 export const comparePassword = async (user, enteredPassword) => {
