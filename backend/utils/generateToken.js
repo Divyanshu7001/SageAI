@@ -20,9 +20,7 @@ export const generateToken = async (user, message, statuscode, res) => {
   
   const cookieName = user.role == "Admin" ? "AdminToken" : "UserToken";
 
-  if (typeof window !== "undefined") {
-    localStorage.setItem(cookieName, token);
-  }
+  localStorage.setItem(cookieName, token);
 
   res
     .status(statuscode)
